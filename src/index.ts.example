@@ -1,35 +1,3 @@
-# Token Generation - Disable the refresh token
-
-## Explanation
-
-Token Generation is JWT Token with a "generation" system  
-Required mysql database
-
-### Generation system
-
-All refresh tokens are created with a generation.  
-All access tokens are only created when the refresh token's generation is valid.
-
-## Install
-
-### BASH
-
-```bash
-npm install
-```
-
-### MYSQL
-
-```sql
-CREATE TABLE generation (
-  id varchar(/*what you want*/) not null,
-  generation int not null
-);
-```
-
-## Example
-
-```javascript
 import TokenGeneration from "./generation";
 import crypto from "crypto";
 
@@ -46,7 +14,7 @@ const generation = new TokenGeneration(
 );
 
 (async () => {
-  const refreshToken = await generation.createRefreshToken("hanzikr", 20);
+  const refreshToken = await generation.createRefreshToken("smile", 20);
   const accessToken = await generation.createAccessToken(refreshToken, 30);
 
   if (!accessToken) throw new Error("Access token error");
@@ -54,7 +22,7 @@ const generation = new TokenGeneration(
   console.log(generation.tokenToString(refreshToken));
   console.log(generation.tokenToString(accessToken));
 
-  generation.addGeneration("hanzikr"); //Disable refresh token
+  generation.addGeneration("smile"); //Disable refresh token
 
   //It will be null
   const accessToken2 = await generation.createAccessToken(refreshToken, 30);
@@ -62,4 +30,3 @@ const generation = new TokenGeneration(
 
   generation.close();
 })();
-```
