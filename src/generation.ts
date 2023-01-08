@@ -100,7 +100,7 @@ class TokenGeneration {
   close() {
     this.pool.end();
   }
-  verifyRefreshToken(refreshToken: string | null): IToken | null {
+  verifyRefreshToken(refreshToken: string | undefined): IToken | null {
     if (!refreshToken) return null;
     const token = this.verifyToken(refreshToken);
     if (!token) return null;
@@ -108,7 +108,7 @@ class TokenGeneration {
     if (token.type !== "refresh") return null;
     else return token;
   }
-  verifyAccessToken(accessToken: string | null): IToken | null {
+  verifyAccessToken(accessToken: string | undefined): IToken | null {
     if (!accessToken) return null;
     const token = this.verifyToken(accessToken);
     if (!token) return null;
