@@ -100,21 +100,21 @@ class TokenGeneration {
   close() {
     this.pool.end();
   }
-  verifyRefreshToken(refreshToken: string | undefined): IToken | null {
+  verifyRefreshToken(refreshToken: string | undefined): IRefreshToken | null {
     if (!refreshToken) return null;
     const token = this.verifyToken(refreshToken);
     if (!token) return null;
 
     if (token.type !== "refresh") return null;
-    else return token;
+    else return token as IRefreshToken;
   }
-  verifyAccessToken(accessToken: string | undefined): IToken | null {
+  verifyAccessToken(accessToken: string | undefined): IAccessToken | null {
     if (!accessToken) return null;
     const token = this.verifyToken(accessToken);
     if (!token) return null;
 
     if (token.type !== "access") return null;
-    else return token;
+    else return token as IAccessToken;
   }
 }
 
