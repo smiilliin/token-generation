@@ -90,6 +90,7 @@ class TokenGeneration {
   private verifyToken(tokenString: string): IToken | null {
     try {
       const token = jwt.verify(tokenString, this.hmacKey) as IToken;
+      if (new Date(token.expires) < new Date()) return null;
       return token;
     } catch (e) {
       return null;
