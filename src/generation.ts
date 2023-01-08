@@ -66,10 +66,8 @@ class TokenGeneration {
     };
     return refreshToken;
   }
-  async updateRefreshToken(token: IRefreshToken, days: number): Promise<IRefreshToken> {
-    if (!this.checkGeneration(token)) {
-      token.generation = await this.getGeneration(token.id);
-    }
+  async updateRefreshToken(token: IRefreshToken, days: number): Promise<IRefreshToken | null> {
+    if (!(await this.checkGeneration(token))) return null;
     token.expires = addDays(days).toUTCString();
 
     return token;
