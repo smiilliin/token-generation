@@ -1,6 +1,5 @@
 import mysql from "mysql";
 import jwt from "jsonwebtoken";
-import util from "util";
 import { addDays, addMinutes } from "./time";
 
 interface IToken {
