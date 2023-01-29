@@ -22,7 +22,7 @@ const generation = new TokenGeneration(
   console.log(generation.tokenToString(refreshToken));
   console.log(generation.tokenToString(accessToken));
 
-  generation.addGeneration("smile"); //Disable refresh token
+  await generation.addGeneration("smile"); //Disable refresh token
 
   //It will be null
   const accessToken2 = await generation.createAccessToken(refreshToken, 30);
