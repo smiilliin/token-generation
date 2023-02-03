@@ -7,8 +7,7 @@ Required mysql database
 
 ### Generation system
 
-All refresh tokens are created with a generation.  
-All access tokens are only created when the refresh token's generation is valid.
+All refresh tokens are created with a generation and all access tokens are only created when the refresh token's generation is valid
 
 ## Install
 
@@ -29,7 +28,7 @@ CREATE TABLE generation (
 
 ## Example
 
-```javascript
+```typescript
 import TokenGeneration from "./generation";
 import crypto from "crypto";
 
@@ -46,20 +45,13 @@ const generation = new TokenGeneration(
 );
 
 (async () => {
-  const refreshToken = await generation.createRefreshToken("hanzikr", 20);
-  const accessToken = await generation.createAccessToken(refreshToken, 30);
+  const refreshToken = await generation.createRefreshToken("test", 20);
+  if (!refreshToken) throw new Error("Error generating refresh token");
 
-  if (!accessToken) throw new Error("Access token error");
+  const accessToken = await generation.createAccessToken(refreshToken, 30);
+  if (!accessToken) throw new Error("Error generating access token");
 
   console.log(generation.tokenToString(refreshToken));
   console.log(generation.tokenToString(accessToken));
-
-  generation.addGeneration("hanzikr"); //Disable refresh token
-
-  //It will be null
-  const accessToken2 = await generation.createAccessToken(refreshToken, 30);
-  console.log(accessToken2);
-
-  generation.close();
 })();
 ```
