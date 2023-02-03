@@ -82,14 +82,19 @@ class TokenGeneration {
       return false;
     }
   }
-  async createRefreshToken(id: string, days: number): Promise<IRefreshToken> {
-    const refreshToken: IRefreshToken = {
-      type: "refresh",
-      expires: addDays(days).getTime(),
-      id: id,
-      generation: await this.getGeneration(id),
-    };
-    return refreshToken;
+  async createRefreshToken(id: string, days: number): Promise<IRefreshToken | null> {
+    try {
+      const refreshToken: IRefreshToken = {
+        type: "refresh",
+        expires: addDays(days).getTime(),
+        id: id,
+        generation: await this.getGeneration(id),
+      };
+      return refreshToken;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
   }
   async updateRefreshToken(token: IRefreshToken, days: number): Promise<IRefreshToken | null> {
     if (!(await this.checkGeneration(token))) return null;
@@ -98,16 +103,21 @@ class TokenGeneration {
     return token;
   }
   async createAccessToken(refreshToken: IRefreshToken, minutes: number): Promise<IAccessToken | null> {
-    const { id } = refreshToken;
-    if (!(await this.checkGeneration(refreshToken))) return null;
+    try {
+      const { id } = refreshToken;
+      if (!(await this.checkGeneration(refreshToken))) return null;
 
-    const accessToken: IAccessToken = {
-      type: "access",
-      expires: addMinutes(minutes).getTime(),
-      id: id,
-    };
+      const accessToken: IAccessToken = {
+        type: "access",
+        expires: addMinutes(minutes).getTime(),
+        id: id,
+      };
 
-    return accessToken;
+      return accessToken;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
   }
   tokenToString(token: IToken): string {
     return jwt.sign(token, this.hmacKey, { algorithm: "HS256", noTimestamp: true });
