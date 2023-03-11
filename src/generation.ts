@@ -29,6 +29,11 @@ class TokenGeneration {
     this.pool = mysql.createPool(config);
     this.hmacKey = hmacKey;
   }
+  /**
+   * Get generation
+   * @param id id
+   * @returns returns user's generation
+   */
   private async getGeneration(id: string): Promise<number> {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
@@ -56,6 +61,10 @@ class TokenGeneration {
       });
     });
   }
+  /**
+   * Disable refresh token
+   * @param id id
+   */
   async addGeneration(id: string): Promise<void> {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, connection) => {
@@ -72,7 +81,12 @@ class TokenGeneration {
       });
     });
   }
-  async checkGeneration(token: IRefreshToken): Promise<boolean> {
+  /**
+   * Check generation of token
+   * @param token
+   * @returns true or false
+   */
+  private async checkGeneration(token: IRefreshToken): Promise<boolean> {
     try {
       const _generation = await this.getGeneration(token.id);
 
@@ -85,7 +99,13 @@ class TokenGeneration {
       return false;
     }
   }
-  async createRefreshToken(id: string, days: number): Promise<IRefreshToken | null> {
+  /**
+   * Create refresh token
+   * @param id id
+   * @param days days
+   * @returns Refresh token
+   */
+  async createRefreshToken(id: string, days: number = 20): Promise<IRefreshToken | null> {
     try {
       const refreshToken: IRefreshToken = {
         type: "refresh",
@@ -100,13 +120,25 @@ class TokenGeneration {
       return null;
     }
   }
-  async updateRefreshToken(token: IRefreshToken, days: number): Promise<IRefreshToken | null> {
+  /**
+   * Update expires of refresh token
+   * @param token token
+   * @param days days
+   * @returns New refresh token
+   */
+  async updateRefreshToken(token: IRefreshToken, days: number = 20): Promise<IRefreshToken | null> {
     if (!(await this.checkGeneration(token))) return null;
     token.expires = addDays(days).getTime();
 
     return token;
   }
-  async createAccessToken(refreshToken: IRefreshToken, minutes: number): Promise<IAccessToken | null> {
+  /**
+   * Create acceess token
+   * @param refreshToken refresh token
+   * @param minutes minutes
+   * @returns Access token
+   */
+  async createAccessToken(refreshToken: IRefreshToken, minutes: number = 30): Promise<IAccessToken | null> {
     try {
       const { id } = refreshToken;
       if (!(await this.checkGeneration(refreshToken))) return null;
@@ -124,9 +156,19 @@ class TokenGeneration {
       return null;
     }
   }
+  /**
+   * Sign for jwt token
+   * @param token Token
+   * @returns Token string
+   */
   tokenToString(token: IToken): string {
     return jwt.sign(token, this.hmacKey, { algorithm: "HS256", noTimestamp: true });
   }
+  /**
+   * Verify token
+   * @param tokenString
+   * @returns
+   */
   private verifyToken(tokenString: string): IToken | null {
     try {
       const token = jwt.verify(tokenString, this.hmacKey) as IToken;
@@ -136,10 +178,18 @@ class TokenGeneration {
       return null;
     }
   }
+  /**
+   * Close database pool
+   */
   close() {
     this.pool.end();
   }
-  verifyRefreshToken(refreshToken: string | undefined): IRefreshToken | null {
+  /**
+   * Verify refresh token
+   * @param refreshToken
+   * @returns Refresh token or null
+   */
+  verifyRefreshToken(refreshToken?: string): IRefreshToken | null {
     if (!refreshToken) return null;
     const token = this.verifyToken(refreshToken);
     if (!token) return null;
@@ -147,7 +197,12 @@ class TokenGeneration {
     if (token.type !== "refresh") return null;
     else return token as IRefreshToken;
   }
-  verifyAccessToken(accessToken: string | undefined): IAccessToken | null {
+  /**
+   * Verify access token
+   * @param refreshToken
+   * @returns Access token or null
+   */
+  verifyAccessToken(accessToken?: string): IAccessToken | null {
     if (!accessToken) return null;
     const token = this.verifyToken(accessToken);
     if (!token) return null;
