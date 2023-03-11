@@ -1,6 +1,7 @@
 import mysql from "mysql";
 import jwt from "jsonwebtoken";
 import { addDays, addMinutes } from "./time";
+import { v4 as createUUID } from "uuid";
 
 interface IToken {
   type: string;
@@ -9,9 +10,11 @@ interface IToken {
 interface IRefreshToken extends IToken {
   id: string;
   generation: number;
+  uuid: string;
 }
 interface IAccessToken extends IToken {
   id: string;
+  uuid: string;
 }
 interface IGeneration {
   id: string;
@@ -89,6 +92,7 @@ class TokenGeneration {
         expires: addDays(days).getTime(),
         id: id,
         generation: await this.getGeneration(id),
+        uuid: createUUID(),
       };
       return refreshToken;
     } catch (err) {
@@ -111,6 +115,7 @@ class TokenGeneration {
         type: "access",
         expires: addMinutes(minutes).getTime(),
         id: id,
+        uuid: createUUID(),
       };
 
       return accessToken;
