@@ -2,12 +2,8 @@
 
 ## Explanation
 
-Token Generation is JWT Token with a "generation" system  
+All refresh tokens are created with a generation and all access tokens are only created when the refresh token's generation is valid  
 Required mysql database
-
-### Generation system
-
-All refresh tokens are created with a generation and all access tokens are only created when the refresh token's generation is valid
 
 ## Install
 
@@ -21,9 +17,77 @@ npm install
 
 ```sql
 CREATE TABLE generation (
-  id varchar(/*what you want*/) not null,
+  id varchar(/* (id length) */) not null,
   generation int not null
 );
+```
+
+## Usage
+
+### TokenGeneration
+
+```typescript
+import TokenGeneration from "./generation";
+import crypto from "crypto";
+
+const hmacKey = Buffer.from(crypto.randomBytes(32)); //HMAC KEY
+
+const generation = new TokenGeneration(
+  {
+    host: "localhost",
+    user: "(user)",
+    password: "(password)",
+    database: "(database)",
+  },
+  hmacKey
+);
+```
+
+### createRefreshToken
+
+Create refresh token
+
+```typescript
+const refreshToken = await generation.createRefreshToken("smile", 20);
+console.log(refreshToken);
+```
+
+### createAccessToken
+
+Create access token
+
+```typescript
+const accessToken = await generation.createAccessToken(refreshToken, 30);
+console.log(accessToken);
+```
+
+### updateRefreshToken
+
+Update expires of refresh token
+
+```typescript
+const _refreshToken = await generation.updateRefreshToken(refreshToken, 20);
+console.log(_refreshToken);
+```
+
+### tokenToString
+
+Sign for jwt token
+
+```typescript
+const refreshTokenString = generation.tokenToString(refreshToken);
+const accessTokenString = generation.tokenToString(accessToken);
+
+console.log(refreshTokenString);
+console.log(accessTokenString);
+```
+
+### addGeneration
+
+Disable refresh token
+
+```typescript
+await generation.addGeneration("test");
 ```
 
 ## Example
@@ -53,5 +117,11 @@ const generation = new TokenGeneration(
 
   console.log(generation.tokenToString(refreshToken));
   console.log(generation.tokenToString(accessToken));
+
+  await generation.addGeneration("test"); //Disable refresh token
+
+  console.log(generation.createAccessToken(refreshToken)); //It returns null
+
+  generation.close();
 })();
 ```
