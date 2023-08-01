@@ -10,7 +10,7 @@ const addDays = (days: number): Date => {
 };
 const addHours = (hours: number): Date => {
   const date = new Date();
-  date.setHours(date.getMonth() + hours);
+  date.setHours(date.getHours() + hours);
   return date;
 };
 const addMinutes = (minutes: number): Date => {

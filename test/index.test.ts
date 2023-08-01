@@ -2,20 +2,20 @@ import TokenGeneration, { IAccessToken, IRefreshToken } from "../src/generation"
 import crypto from "crypto";
 import dotenv from "dotenv";
 import assert from "assert";
+import mysql from "mysql";
 
 dotenv.config();
 
 describe(`Disable refresh token`, () => {
+  const dbConfig = {
+    host: process.env["DB_HOST"],
+    user: process.env["DB_USER"],
+    password: process.env["DB_PASSWORD"],
+    database: process.env["DB_DATABASE"],
+  };
+  const pool = mysql.createPool(dbConfig);
   const hmacKey = Buffer.from(crypto.randomBytes(32)); //HMAC KEY
-  const generation = new TokenGeneration(
-    {
-      host: process.env["DB_HOST"],
-      user: process.env["DB_USER"],
-      password: process.env["DB_PASSWORD"],
-      database: process.env["DB_DATABASE"],
-    },
-    hmacKey
-  );
+  const generation = new TokenGeneration(pool, hmacKey);
 
   const username = "test";
 

@@ -25,8 +25,8 @@ class TokenGeneration {
   private pool: mysql.Pool;
   private hmacKey: Buffer;
 
-  constructor(config: mysql.PoolConfig, hmacKey: Buffer) {
-    this.pool = mysql.createPool(config);
+  constructor(pool: mysql.Pool, hmacKey: Buffer) {
+    this.pool = pool;
     this.hmacKey = hmacKey;
   }
   /**
