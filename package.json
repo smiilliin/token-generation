@@ -1,6 +1,6 @@
 {
   "name": "token-generation",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Disable the refresh token",
   "main": "dist/generation.js",
   "scripts": {
