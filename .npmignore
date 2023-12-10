@@ -1,4 +1,5 @@
 .npmignore
 tsconfig.json
 test
+src
 .env
