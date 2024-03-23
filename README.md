@@ -2,7 +2,8 @@
 
 ## Explanation
 
-All refresh tokens are created with a generation and all access tokens are only created when the refresh token's generation is valid  
+All refresh tokens are created with a generation and all access tokens are only created when the refresh token's  generation is valid  
+https://velog.io/@smiilliin/token-generation-구조  
 Required mysql database
 
 ## Install
